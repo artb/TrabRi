@@ -1,4 +1,4 @@
-cf74 = '/Users/arthurbinda/Desktop/TrabRI/cf74'
+cf74 = 'cf74'
 cf75 = '/Users/arthurbinda/Desktop/TrabRI/cf75'
 cf76 = '/Users/arthurbinda/Desktop/TrabRI/cf76'
 cf77 = '/Users/arthurbinda/Desktop/TrabRI/cf77'
@@ -12,21 +12,31 @@ tagImportante = ['AU','TI','MJ','MN','AB','EX']
 documentos = []
 palavrasDocumento = []
 identidadeDocumento = []
+stopwords = ['']
 aux = 0
 #FUNCAO PARA INSERIR AS PALAVRAS NA HASH, PASSA A PALAVRA E O ID DO DOCUMENTO. ID DO DOCUMENTO EH O RN
 def cadastraPalavras(palavrita,iddoc):
     word = palavrita
-    if(word in vocabulario):
-        tuplaRetornada = vocabulario[word]
-        for i in tuplaRetornada:
-            #SE A CHAVE JA EXISTE, INCREMENTA O RF
-            if (i[0] == iddoc):
-                amigo = i[1]
-                amigo = amigo + 1
-                vocabulario[word] = [(iddoc,amigo)]
-    else:
-            #SENAO ELE SO INSERE COM RF 1
-        vocabulario[word] = [(iddoc,1)]
+    veja = 0
+    top = False
+    if(word not in stopwords):
+        if(word in vocabulario):
+            tuplaRetornada = vocabulario[word]
+            for i in range(0,len(tuplaRetornada)):
+                #SE A CHAVE JA EXISTE, INCREMENTA O RF
+                if (tuplaRetornada[i][0] == iddoc):
+                    neo = (iddoc,tuplaRetornada[i][1]+1)
+                    tuplaRetornada[i] = neo
+                    #amigo = amigo + 1
+                    #i = (iddoc,amigo)
+                    #vocabulario[word] = [i]
+                    top = True
+                    break
+            if not top:
+                vocabulario[word].append((iddoc,1))
+        else:
+                #SENAO ELE SO INSERE COM RF 1
+            vocabulario[word] = [(iddoc,1)]
 
 #AQUI COMECA TUDO
 with open(cf74,'r') as D1:
@@ -55,4 +65,6 @@ for documento in documentos:
         #CADASTRO CADA PALAVRA ENQUANTO ESTA NO MESMO DOCUMENTO
         cadastraPalavras(palavra,identidadeDocumento[aux])
     aux = aux + 1
-print(vocabulario)
+
+for x in vocabulario:
+    print(x,"-",vocabulario[x])
